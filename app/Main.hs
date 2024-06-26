@@ -11,9 +11,8 @@ import Data.Functor (($>))
 quickSort :: Ord a => [a] -> [a]
 quickSort xs = runST $ do
     let a = V.fromList xs
-        (l, h) = (0, V.length a - 1)
     res <- V.thaw a
-    quickSort' res l h
+    quickSort' res 0 (V.length a - 1)
     V.toList <$> V.freeze res
   where 
     quickSort' :: Ord a => VM.STVector s a -> Int -> Int -> ST s ()
@@ -23,18 +22,23 @@ quickSort xs = runST $ do
         quickSort' a (p + 1) h
 
     partition :: Ord a => VM.STVector s a -> Int -> Int -> ST s Int
-    partition a l h = do
-      p  <- VM.read a l
-      l' <- newSTRef (l - 1)
-      h' <- newSTRef (h + 1)
-      untilJust $ do
-        modifySTRef l' (+   1 ) `untilM_` (>= p) <$> (VM.read a =<< readSTRef l')
-        modifySTRef h' (+ (-1)) `untilM_` (<= p) <$> (VM.read a =<< readSTRef h')
-        l'' <- readSTRef l'
-        h'' <- readSTRef h'
-        if l'' >= h''
-           then pure $ Just h''
-           else VM.swap a l'' h'' $> Nothing
+    partition a lo hi = do
+        p  <- VM.read a lo
+        l' <- newSTRef (lo - 1)
+        h' <- newSTRef (hi + 1)
+        untilJust $ do
+            increment l' `untilM_` (p <=) <$> (a `at` l')
+            decrement h' `untilM_` (p >=) <$> (a `at` h')
+            l'' <- readSTRef l'
+            h'' <- readSTRef h'
+            if l'' >= h''
+              then pure $ Just h''
+              else VM.swap a l'' h'' $> Nothing
+
+    increment r = modifySTRef r (+ 1)
+    decrement r = modifySTRef r (+ (-1))
+    at a r = VM.read a =<< readSTRef r
+
 
 
 main :: IO ()
