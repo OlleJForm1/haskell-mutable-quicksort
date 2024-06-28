@@ -18,3 +18,4 @@ executable quicksort
                       monad-loops
     hs-source-dirs:   app
     default-language: Haskell2010
+    other-modules:    Lib
