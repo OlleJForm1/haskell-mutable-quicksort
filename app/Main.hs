@@ -7,33 +7,32 @@ import Control.Monad (when)
 import Control.Monad.Loops (untilJust, untilM_)
 import Data.STRef (newSTRef, modifySTRef, readSTRef)
 import Data.Functor (($>))
+import Data.Bifoldable (bimapM_)
 
 quickSort :: Ord a => [a] -> [a]
 quickSort xs = runST $ do
     let a = V.fromList xs
     res <- V.thaw a
-    quickSort' res 0 (V.length a - 1)
+    quickSort' res
     V.toList <$> V.freeze res
   where 
-    quickSort' :: Ord a => VM.STVector s a -> Int -> Int -> ST s ()
-    quickSort' a l h = when (l < h && l >= 0) $ do
-        p <- partition a l h
-        quickSort' a l p
-        quickSort' a (p + 1) h
+    quickSort' :: Ord a => VM.STVector s a -> ST s ()
+    quickSort' a = when (VM.length a > 1) 
+                 $ partition a >>= bimapM_ quickSort' quickSort'
 
-    partition :: Ord a => VM.STVector s a -> Int -> Int -> ST s Int
-    partition a lo hi = do
-        p  <- VM.read a lo
-        l' <- newSTRef (lo - 1)
-        h' <- newSTRef (hi + 1)
+    partition :: Ord a => VM.STVector s a -> ST s (VM.STVector s a, VM.STVector s a)
+    partition a = do
+        p <- VM.read a 0
+        l <- newSTRef (-1)
+        h <- newSTRef $ VM.length a
         untilJust $ do
-            increment l' `untilM_` (p <=) <$> (a `at` l')
-            decrement h' `untilM_` (p >=) <$> (a `at` h')
-            l'' <- readSTRef l'
-            h'' <- readSTRef h'
-            if l'' >= h''
-              then pure $ Just h''
-              else VM.swap a l'' h'' $> Nothing
+            increment l `untilM_` (p <=) <$> (a `at` l)
+            decrement h `untilM_` (p >=) <$> (a `at` h)
+            l' <- readSTRef l
+            h' <- readSTRef h
+            if l' < h'
+              then VM.swap a l' h' $> Nothing
+              else pure $ Just $ VM.splitAt (h' + 1) a
 
     increment r = modifySTRef r (+ 1)
     decrement r = modifySTRef r (+ (-1))
