@@ -1,4 +1,4 @@
-cabal-version:   3.0
+cabal-version:   3.4
 name:            quicksort
 version:         0.1.0.0
 license:         NONE
@@ -13,9 +13,26 @@ common warnings
 executable quicksort
     import:           warnings
     main-is:          Main.hs
-    build-depends:    base ^>=4.16.4.0,
-                      vector,
-                      monad-loops
+    build-depends:    base ^>=4.20.0.0,
+                      quicksort:lib
     hs-source-dirs:   app
     default-language: Haskell2010
-    other-modules:    Lib
+
+library lib
+    build-depends:    base ^>= 4.20.0.0,
+                      vector,
+                      monad-loops
+    hs-source-dirs:   lib
+    exposed-modules:  Data.Ord.Quicksort
+    other-modules:    Control.Applicative.Bitraversable, 
+                      Data.Ord.Compare,
+                      Data.Vector.Mutable.Function
+
+test-suite test
+  type:           exitcode-stdio-1.0
+  main-is:        Main.hs
+  build-depends:  base ^>=4.20.0.0,
+                  quicksort:lib,
+                  QuickCheck
+  hs-source-dirs: test
+
