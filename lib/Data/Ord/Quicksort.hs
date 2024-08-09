@@ -1,3 +1,5 @@
+-- "Haskell is the finest imperative programming language"
+
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Data.Ord.Quicksort where
@@ -14,6 +16,7 @@ import Data.Vector.Mutable.Function (withSTVector)
 import Control.Applicative.Bitraversable (bothA_, bothA)
 import Data.Ord.Compare (lessOrEqualOn, greaterOrEqualOn)
 import Data.Ord (comparing)
+
 
 quickSort :: Ord a => [a] -> [a]
 quickSort = quickSortBy compare
