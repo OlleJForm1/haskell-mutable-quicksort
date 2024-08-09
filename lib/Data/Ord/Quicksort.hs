@@ -39,6 +39,3 @@ quickSortBy c = withSTVector $ fix $ \rec v ->
     decrement = (`modifySTRef` (+ (-1)))
     at a = readSTRef >=> VM.read a
 
-main :: IO ()
-main = print $ quickSort ([1, 5, 3, 6, 7, 22, 4, 6, 2, 3, 44] :: [Int])
-
