@@ -21,6 +21,8 @@ import Data.Ord (comparing)
 quickSort :: Ord a => [a] -> [a]
 quickSort = quickSortBy compare
 
+-- Efficient, in place, recursive quicksort using Hoare's partition scheme
+-- with a simple middle element pivot
 quickSortBy :: forall a. (a -> a -> Ordering) -> [a] -> [a]
 quickSortBy c = withSTVector $ fix $ \rec v ->
     when (VM.length v > 1) $ do
