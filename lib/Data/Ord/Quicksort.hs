@@ -6,25 +6,25 @@ module Data.Ord.Quicksort where
 
 import Control.Monad.ST (ST)
 import qualified Data.Vector.Mutable as VM
-import Control.Monad (when, (>=>))
+import Control.Monad (when, (>=>), void)
 import Control.Monad.Loops (untilJust, untilM_)
 import Data.STRef (newSTRef, modifySTRef, readSTRef)
 import Data.Functor (($>))
-import Control.Monad.Fix (fix)
 import Data.Function ((&))
+import Data.Function.Recursive (recursive)
 import Data.Vector.Mutable.Function (withSTVector)
 import Control.Applicative.Bitraversable (bothA_, bothA)
 import Data.Ord.Compare (lessOrEqualOn, greaterOrEqualOn)
 import Data.Ord (comparing)
 
 
-quickSort :: Ord a => [a] -> [a]
+quickSort :: (Show a, Ord a) => [a] -> [a]
 quickSort = quickSortBy compare
 
--- Efficient, in place, recursive quicksort using Hoare's partition scheme
+-- Efficient, in place, recursive, imperative-style quicksort using Hoare's partition scheme
 -- with a simple middle element pivot
-quickSortBy :: forall a. (a -> a -> Ordering) -> [a] -> [a]
-quickSortBy c = withSTVector $ fix $ \rec v ->
+quickSortBy :: forall a. Show a => (a -> a -> Ordering) -> [a] -> [a]
+quickSortBy c = withSTVector $ recursive $ \rec v ->
     when (VM.length v > 1) $ do
         partition v >>= bothA_ rec
   where 
@@ -38,7 +38,7 @@ quickSortBy c = withSTVector $ fix $ \rec v ->
             (l', h') <- readSTRef `bothA` (l, h)
             if l' < h'
               then VM.swap a l' h' $> Nothing
-              else VM.splitAt (h' + 1) a & Just & pure
+              else VM.splitAt h' a & Just & pure
 
     increment = (`modifySTRef` (+   1))
     decrement = (`modifySTRef` (+ (-1)))

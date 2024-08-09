@@ -26,7 +26,8 @@ library lib
     exposed-modules:  Data.Ord.Quicksort
     other-modules:    Control.Applicative.Bitraversable, 
                       Data.Ord.Compare,
-                      Data.Vector.Mutable.Function
+                      Data.Vector.Mutable.Function,
+                      Data.Function.Recursive
 
 test-suite test
   type:           exitcode-stdio-1.0
