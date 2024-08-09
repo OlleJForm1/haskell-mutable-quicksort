@@ -28,7 +28,7 @@ quickSortBy c = withSTVector $ fix $ \rec v ->
   where 
     partition :: VM.STVector s a -> ST s (VM.STVector s a, VM.STVector s a)
     partition a = do
-        p <- VM.read a 0
+        p <- pivot a
         (l, h) <- newSTRef `bothA` (-1, VM.length a)
         untilJust $ do
             increment l `untilM_` (p `lessOrEqualOn` c) <$> (a `at` l)
@@ -41,4 +41,5 @@ quickSortBy c = withSTVector $ fix $ \rec v ->
     increment = (`modifySTRef` (+   1))
     decrement = (`modifySTRef` (+ (-1)))
     at a = readSTRef >=> VM.read a
+    pivot a = VM.read a (VM.length a `div` 2)
 
