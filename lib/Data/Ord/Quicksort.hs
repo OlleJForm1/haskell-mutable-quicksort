@@ -12,12 +12,13 @@ import Control.Monad.Fix (fix)
 import Data.Function ((&))
 import Data.Vector.Mutable.Function (withSTVector)
 import Control.Applicative.Bitraversable (bothA_, bothA)
-import Data.Ord.Compare (lte)
+import Data.Ord.Compare (lessOrEqualOn, greaterOrEqualOn)
+import Data.Ord (comparing)
 
 quickSort :: Ord a => [a] -> [a]
 quickSort = quickSortBy compare
 
-quickSortBy :: forall a. Ord a => (a -> a -> Ordering) -> [a] -> [a]
+quickSortBy :: forall a. (a -> a -> Ordering) -> [a] -> [a]
 quickSortBy c = withSTVector $ fix $ \rec v ->
     when (VM.length v > 1) $ do
         partition v >>= bothA_ rec
@@ -27,8 +28,8 @@ quickSortBy c = withSTVector $ fix $ \rec v ->
         p <- VM.read a 0
         (l, h) <- newSTRef `bothA` (-1, VM.length a)
         untilJust $ do
-            increment l `untilM_` (lte . c p) <$> (a `at` l)
-            decrement h `untilM_` (p >=) <$> (a `at` h)
+            increment l `untilM_` (p `lessOrEqualOn` c) <$> (a `at` l)
+            decrement h `untilM_` (p `greaterOrEqualOn` c) <$> (a `at` h)
             (l', h') <- readSTRef `bothA` (l, h)
             if l' < h'
               then VM.swap a l' h' $> Nothing
