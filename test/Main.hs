@@ -1,8 +1,8 @@
 module Main where
 
-import Test.QuickCheck as QC
-import Data.Ord.Quicksort (quickSort)
-import Data.List (sort)
+import           Data.List          (sort)
+import           Data.Ord.Quicksort (quickSort)
+import           Test.QuickCheck    as QC
 
 sorts :: [Int] -> Bool
 sorts xs = sort xs == quickSort xs

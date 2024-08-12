@@ -1,6 +1,6 @@
 module Main where
 
-import Data.Ord.Quicksort (quickSort)
+import           Data.Ord.Quicksort (quickSort)
 
 main :: IO ()
 main = print $ quickSort xs
