@@ -1,6 +1,7 @@
 -- "Haskell is the finest imperative programming language"
 
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE UnicodeSyntax #-}
 
 module Data.Ord.Quicksort where
 
@@ -25,7 +26,7 @@ quickSort = quickSortBy compare
 
 -- Efficient, in place, recursive, imperative-style quicksort using Hoare's partition scheme
 -- with a simple middle element pivot
-quickSortBy :: forall a. Show a => (a -> a -> Ordering) -> [a] -> [a]
+quickSortBy :: ∀ a. Show a => (a -> a -> Ordering) -> [a] -> [a]
 quickSortBy c = withSTVector $ recursive $ \rec v ->
     when (VM.length v > 1) $ do
         partition v >>= bothA_ rec

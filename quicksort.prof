@@ -1,0 +1,89 @@
+	Mon Aug 12 15:23 2024 Time and Allocation Profiling Report  (Final)
+
+	   quicksort +RTS -p -RTS
+
+	total time  =        0.00 secs   (0 ticks @ 1000 us, 1 processor)
+	total alloc =      79,840 bytes  (excludes profiling overheads)
+
+COST CENTRE  MODULE                       SRC                                                 %time %alloc
+
+getStdRandom System.Random                src/System/Random.hs:(527,1)-(528,28)                 0.0    2.7
+untilJust    Control.Monad.Loops          src/Control/Monad/Loops.hs:(221,1)-(227,35)           0.0    9.6
+withSTVector Data.Vector.Mutable.Function lib/Data/Vector/Mutable/Function.hs:(10,1)-(13,31)    0.0    2.0
+untilM_      Data.Ord.Quicksort           lib/Data/Ord/Quicksort.hs:(50,1)-(55,21)              0.0   17.2
+increment    Data.Ord.Quicksort           lib/Data/Ord/Quicksort.hs:45:39-61                    0.0    1.4
+decrement    Data.Ord.Quicksort           lib/Data/Ord/Quicksort.hs:46:39-62                    0.0    1.2
+main         Main                         app/Main.hs:(8,1)-(9,54)                              0.0   15.4
+CAF          GHC.Internal.IO.Handle.FD    <entire-module>                                       0.0   43.5
+CAF          GHC.Internal.IO.Encoding     <entire-module>                                       0.0    3.1
+
+
+                                                                                                                                      individual      inherited
+COST CENTRE               MODULE                            SRC                                                    no.     entries  %time %alloc   %time %alloc
+
+MAIN                      MAIN                              <built-in>                                             223           0    0.0    0.8     0.0  100.0
+ CAF                      GHC.Internal.Conc.Signal          <entire-module>                                        413           0    0.0    0.8     0.0    0.8
+ CAF                      GHC.Internal.IO.Encoding          <entire-module>                                        340           0    0.0    3.1     0.0    3.1
+ CAF                      GHC.Internal.IO.Encoding.Iconv    <entire-module>                                        338           0    0.0    0.3     0.0    0.3
+ CAF                      GHC.Internal.IO.Handle.FD         <entire-module>                                        329           0    0.0   43.5     0.0   43.5
+ CAF                      Main                              <entire-module>                                        254           0    0.0    0.0     0.0    0.0
+  main                    Main                              app/Main.hs:(8,1)-(9,54)                               446           1    0.0    0.0     0.0    0.0
+   randomRIO              System.Random                     src/System/Random.hs:550:1-46                          448           1    0.0    0.0     0.0    0.0
+    getStdRandom          System.Random                     src/System/Random.hs:(527,1)-(528,28)                  449           1    0.0    0.0     0.0    0.0
+ CAF                      Data.Ord.Quicksort                <entire-module>                                        253           0    0.0    0.0     0.0    0.0
+  quickSortBy             Data.Ord.Quicksort                lib/Data/Ord/Quicksort.hs:(29,1)-(48,45)               472           0    0.0    0.0     0.0    0.0
+   decrement              Data.Ord.Quicksort                lib/Data/Ord/Quicksort.hs:46:39-62                     480           1    0.0    0.0     0.0    0.0
+   increment              Data.Ord.Quicksort                lib/Data/Ord/Quicksort.hs:45:39-61                     473           1    0.0    0.0     0.0    0.0
+ CAF                      System.Random.Internal            <entire-module>                                        234           0    0.0    0.0     0.0    0.2
+  theStdGen               System.Random.Internal            src/System/Random/Internal.hs:587:1-64                 452           1    0.0    0.1     0.0    0.2
+   initSMGen              System.Random.SplitMix            src/System/Random/SplitMix.hs:381:1-36                 454           0    0.0    0.1     0.0    0.1
+    mkSMGen               System.Random.SplitMix            src/System/Random/SplitMix.hs:377:1-61                 456           1    0.0    0.0     0.0    0.0
+ CAF                      System.Random.SplitMix            <entire-module>                                        232           0    0.0    0.0     0.0    0.0
+  initSMGen               System.Random.SplitMix            src/System/Random/SplitMix.hs:381:1-36                 453           1    0.0    0.0     0.0    0.0
+ CAF                      System.Random.SplitMix.Init       <entire-module>                                        230           0    0.0    0.0     0.0    0.0
+  initialSeed             System.Random.SplitMix.Init       src/System/Random/SplitMix/Init.hs:40:1-26             455           1    0.0    0.0     0.0    0.0
+ main                     Main                              app/Main.hs:(8,1)-(9,54)                               447           0    0.0   15.4     0.0   51.3
+  quickSort               Data.Ord.Quicksort                lib/Data/Ord/Quicksort.hs:24:1-31                      458           1    0.0    0.0     0.0   32.3
+   quickSortBy            Data.Ord.Quicksort                lib/Data/Ord/Quicksort.hs:(29,1)-(48,45)               459           1    0.0    0.1     0.0   32.3
+    withSTVector          Data.Vector.Mutable.Function      lib/Data/Vector/Mutable/Function.hs:(10,1)-(13,31)     460           1    0.0    2.0     0.0   29.7
+     unId                 Data.Vector.Fusion.Util           src/Data/Vector/Fusion/Util.hs:25:21-24                464          21    0.0    0.0     0.0    0.0
+     marray#              Data.Primitive.Array              Data/Primitive/Array.hs:112:5-11                       465          11    0.0    0.0     0.0    0.0
+     array#               Data.Primitive.Array              Data/Primitive/Array.hs:69:5-10                        501          10    0.0    0.0     0.0    0.0
+     recursive            Data.Function.Recursive           lib/Data/Function/Recursive.hs:6:1-23                  466           1    0.0    0.1     0.0   27.8
+      bothA_              Control.Applicative.Bitraversable lib/Control/Applicative/Bitraversable.hs:10:1-32       486           9    0.0    0.5     0.0   21.7
+       bothA              Control.Applicative.Bitraversable lib/Control/Applicative/Bitraversable.hs:7:1-24        488           8    0.0    0.3     0.0    0.3
+       marray#            Data.Primitive.Array              Data/Primitive/Array.hs:112:5-11                       487           8    0.0    0.0     0.0    0.0
+       untilJust          Control.Monad.Loops               src/Control/Monad/Loops.hs:(221,1)-(227,35)            489           8    0.0    7.9     0.0   20.9
+        untilM_           Data.Ord.Quicksort                lib/Data/Ord/Quicksort.hs:(50,1)-(55,21)               490          38    0.0   13.1     0.0   13.1
+         at               Data.Ord.Quicksort                lib/Data/Ord/Quicksort.hs:47:27-51                     493          38    0.0    0.0     0.0    0.0
+          marray#         Data.Primitive.Array              Data/Primitive/Array.hs:112:5-11                       494          38    0.0    0.0     0.0    0.0
+         checkP           Data.Ord.Quicksort                lib/Data/Ord/Quicksort.hs:52:27                        492          38    0.0    0.0     0.0    0.0
+         doA              Data.Ord.Quicksort                lib/Data/Ord/Quicksort.hs:51:19                        491          38    0.0    0.0     0.0    0.0
+         lessOrEqualOn    Data.Ord.Compare                  lib/Data/Ord/Compare.hs:4:1-33                         495          22    0.0    0.0     0.0    0.0
+          lte             Data.Ord.Compare                  lib/Data/Ord/Compare.hs:(10,1)-(11,13)                 496          22    0.0    0.0     0.0    0.0
+         greaterOrEqualOn Data.Ord.Compare                  lib/Data/Ord/Compare.hs:7:1-36                         497          16    0.0    0.0     0.0    0.0
+          gte             Data.Ord.Compare                  lib/Data/Ord/Compare.hs:(14,1)-(15,13)                 498          16    0.0    0.0     0.0    0.0
+        marray#           Data.Primitive.Array              Data/Primitive/Array.hs:112:5-11                       500          16    0.0    0.0     0.0    0.0
+        bothA             Control.Applicative.Bitraversable lib/Control/Applicative/Bitraversable.hs:7:1-24        499          12    0.0    0.0     0.0    0.0
+      bothA               Control.Applicative.Bitraversable lib/Control/Applicative/Bitraversable.hs:7:1-24        468           1    0.0    0.0     0.0    0.0
+      marray#             Data.Primitive.Array              Data/Primitive/Array.hs:112:5-11                       467           1    0.0    0.0     0.0    0.0
+      untilJust           Control.Monad.Loops               src/Control/Monad/Loops.hs:(221,1)-(227,35)            469           1    0.0    1.8     0.0    5.9
+       untilM_            Data.Ord.Quicksort                lib/Data/Ord/Quicksort.hs:(50,1)-(55,21)               470          12    0.0    4.1     0.0    4.1
+        at                Data.Ord.Quicksort                lib/Data/Ord/Quicksort.hs:47:27-51                     476          12    0.0    0.0     0.0    0.0
+         marray#          Data.Primitive.Array              Data/Primitive/Array.hs:112:5-11                       477          12    0.0    0.0     0.0    0.0
+        checkP            Data.Ord.Quicksort                lib/Data/Ord/Quicksort.hs:52:27                        475          12    0.0    0.0     0.0    0.0
+        doA               Data.Ord.Quicksort                lib/Data/Ord/Quicksort.hs:51:19                        471          12    0.0    0.0     0.0    0.0
+        greaterOrEqualOn  Data.Ord.Compare                  lib/Data/Ord/Compare.hs:7:1-36                         482           7    0.0    0.0     0.0    0.0
+         gte              Data.Ord.Compare                  lib/Data/Ord/Compare.hs:(14,1)-(15,13)                 483           7    0.0    0.0     0.0    0.0
+        lessOrEqualOn     Data.Ord.Compare                  lib/Data/Ord/Compare.hs:4:1-33                         478           5    0.0    0.0     0.0    0.0
+         lte              Data.Ord.Compare                  lib/Data/Ord/Compare.hs:(10,1)-(11,13)                 479           5    0.0    0.0     0.0    0.0
+       marray#            Data.Primitive.Array              Data/Primitive/Array.hs:112:5-11                       485           8    0.0    0.0     0.0    0.0
+       bothA              Control.Applicative.Bitraversable lib/Control/Applicative/Bitraversable.hs:7:1-24        484           3    0.0    0.0     0.0    0.0
+     sChunks              Data.Vector.Fusion.Bundle.Monadic src/Data/Vector/Fusion/Bundle/Monadic.hs:122:30-36     463           1    0.0    0.0     0.0    0.0
+     sSize                Data.Vector.Fusion.Bundle.Monadic src/Data/Vector/Fusion/Bundle/Monadic.hs:124:30-34     462           1    0.0    0.0     0.0    0.0
+     upperBound           Data.Vector.Fusion.Bundle.Size    src/Data/Vector/Fusion/Bundle/Size.hs:(129,1)-(131,30) 461           1    0.0    0.0     0.0    0.0
+    decrement             Data.Ord.Quicksort                lib/Data/Ord/Quicksort.hs:46:39-62                     481           0    0.0    1.2     0.0    1.2
+    increment             Data.Ord.Quicksort                lib/Data/Ord/Quicksort.hs:45:39-61                     474           0    0.0    1.4     0.0    1.4
+  randomRIO               System.Random                     src/System/Random.hs:550:1-46                          450           0    0.0    0.0     0.0    3.5
+   getStdRandom           System.Random                     src/System/Random.hs:(527,1)-(528,28)                  451           0    0.0    2.7     0.0    3.5
+    nextWord64            System.Random.SplitMix            src/System/Random/SplitMix.hs:(121,1)-(123,29)         457          11    0.0    0.9     0.0    0.9
