@@ -1,4 +1,4 @@
-{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE RankNTypes    #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
 module Data.Vector.Mutable.Function where

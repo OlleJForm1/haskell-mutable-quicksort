@@ -1,7 +1,7 @@
 -- "Haskell is the finest imperative programming language"
 
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE UnicodeSyntax #-}
+{-# LANGUAGE UnicodeSyntax       #-}
 
 module Data.Ord.Quicksort where
 
@@ -17,34 +17,43 @@ import           Data.Ord.Compare                  (greaterOrEqualOn,
                                                     lessOrEqualOn)
 import           Data.STRef                        (modifySTRef, newSTRef,
                                                     readSTRef)
-import qualified Data.Vector.Mutable               as VM
+import           Data.Vector.Mutable               (STVector, length, read,
+                                                    splitAt, swap)
 import           Data.Vector.Mutable.Function      (withSTVector)
+import           Prelude                           hiding (length, read,
+                                                    splitAt)
+import qualified Data.List as L
 
+qs :: Ord a => [a] -> [a]
+qs [] = []
+qs (x:xs) = qs lesser ++ qs greater
+  where
+    (lesser, greater) = L.partition (<= x) xs
 
-quickSort :: (Show a, Ord a) => [a] -> [a]
+quickSort :: Ord a => [a] -> [a]
 quickSort = quickSortBy compare
 
 -- Efficient, in place, recursive, imperative-style quicksort using Hoare's partition scheme
 -- with a simple middle element pivot
-quickSortBy :: ∀ a. Show a => (a -> a -> Ordering) -> [a] -> [a]
+quickSortBy :: ∀ a. (a -> a -> Ordering) -> [a] -> [a]
 quickSortBy c = withSTVector $ recursive $ \rec v ->
-    when (VM.length v > 1) $ do
+    when (length v > 1) $ do
         partition v >>= bothA_ rec
   where
-    partition :: VM.STVector s a -> ST s (VM.STVector s a, VM.STVector s a)
+    partition :: STVector s a -> ST s (STVector s a, STVector s a)
     partition a = do
         p <- pivot a
-        (l, h) <- newSTRef `bothA` (-1, VM.length a)
+        (l, h) <- newSTRef `bothA` (-1, length a)
         untilJust $ do
             increment l `untilM_` (p `lessOrEqualOn` c) <$> (a `at` l)
             decrement h `untilM_` (p `greaterOrEqualOn` c) <$> (a `at` h)
             (l', h') <- readSTRef `bothA` (l, h)
             if l' < h'
-              then VM.swap a l' h' $> Nothing
-              else VM.splitAt h' a & Just & pure
+              then swap a l' h' $> Nothing
+              else splitAt h' a & Just & pure
 
     increment = (`modifySTRef` (+   1))
     decrement = (`modifySTRef` (+ (-1)))
-    at a = readSTRef >=> VM.read a
-    pivot a = VM.read a (VM.length a `div` 2)
+    at a = readSTRef >=> read a
+    pivot a = read a (length a `div` 2)
 
