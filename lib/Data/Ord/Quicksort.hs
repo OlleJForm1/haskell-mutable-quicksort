@@ -10,8 +10,10 @@ import           Control.Monad                     (void, when, (>=>))
 import           Control.Monad.Loops               (untilJust, untilM_)
 import           Control.Monad.ST                  (ST)
 import           Data.Function                     ((&))
+import           Data.Function.Loops               (loopM)
 import           Data.Function.Recursive           (recursive)
 import           Data.Functor                      (($>))
+import qualified Data.List                         as L
 import           Data.Ord                          (comparing)
 import           Data.Ord.Compare                  (greaterOrEqualOn,
                                                     lessOrEqualOn)
@@ -22,7 +24,6 @@ import           Data.Vector.Mutable               (STVector, length, read,
 import           Data.Vector.Mutable.Function      (withSTVector)
 import           Prelude                           hiding (length, read,
                                                     splitAt)
-import qualified Data.List as L
 
 qs :: Ord a => [a] -> [a]
 qs [] = []
@@ -44,16 +45,18 @@ quickSortBy c = withSTVector $ recursive $ \rec v ->
     partition a = do
         p <- pivot a
         (l, h) <- newSTRef `bothA` (-1, length a)
-        untilJust $ do
-            increment l `untilM_` (p `lessOrEqualOn` c) <$> (a `at` l)
-            decrement h `untilM_` (p `greaterOrEqualOn` c) <$> (a `at` h)
+        loopM $ \continue done -> do
+            increment l `untilM_` ((p `lessOrEqualOn` c) `than` (a `at` l))
+            decrement h `untilM_` ((p `greaterOrEqualOn` c) `than` (a `at` h))
             (l', h') <- readSTRef `bothA` (l, h)
             if l' < h'
-              then swap a l' h' $> Nothing
-              else splitAt h' a & Just & pure
+              then swap a l' h' $> continue
+              else splitAt l' a & done
 
     increment = (`modifySTRef` (+   1))
     decrement = (`modifySTRef` (+ (-1)))
     at a = readSTRef >=> read a
     pivot a = read a (length a `div` 2)
+    than :: Functor f => (a -> b) -> f a -> f b
+    than = (<$>)
 

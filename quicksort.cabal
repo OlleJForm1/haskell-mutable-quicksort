@@ -27,6 +27,7 @@ library lib
     other-modules:    Control.Applicative.Bitraversable, 
                       Data.Ord.Compare,
                       Data.Vector.Mutable.Function,
+                      Data.Function.Loops,
                       Data.Function.Recursive
 
 test-suite test
