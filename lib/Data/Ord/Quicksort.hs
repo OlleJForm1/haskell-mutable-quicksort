@@ -37,26 +37,26 @@ quickSort = quickSortBy compare
 -- Efficient, in place, recursive, imperative-style quicksort using Hoare's partition scheme
 -- with a simple middle element pivot
 quickSortBy :: ∀ a. (a -> a -> Ordering) -> [a] -> [a]
-quickSortBy c = withSTVector $ recursive $ \rec v ->
-    when (length v > 1) $ do
-        partition v >>= bothA_ rec
+quickSortBy c = withSTVector $ recursive $ \recurse vector ->
+    when (length vector > 1) $ do
+        partition vector >>= bothA_ recurse
   where
     partition :: STVector s a -> ST s (STVector s a, STVector s a)
-    partition a = do
-        p <- pivot a
-        (l, h) <- newSTRef `bothA` (-1, length a)
+    partition vector = do
+        p <- choosePivot vector
+        (low, high) <- newSTRef `bothA` (-1, length vector)
         loopM $ \continue done -> do
-            increment l `untilM_` ((p `lessOrEqualOn` c) `than` (a `at` l))
-            decrement h `untilM_` ((p `greaterOrEqualOn` c) `than` (a `at` h))
-            (l', h') <- readSTRef `bothA` (l, h)
-            if l' < h'
-              then swap a l' h' $> continue
-              else splitAt l' a & done
+            increment low `untilM_` ((p `lessOrEqualOn` c) `than` (vector `at` low))
+            decrement high `untilM_` ((p `greaterOrEqualOn` c) `than` (vector `at` high))
+            (low', high') <- readSTRef `bothA` (low, high)
+            if low' < high'
+              then swap vector low' high' $> continue
+              else splitAt low' vector & done
 
     increment = (`modifySTRef` (+   1))
     decrement = (`modifySTRef` (+ (-1)))
     at a = readSTRef >=> read a
-    pivot a = read a (length a `div` 2)
+    choosePivot a = read a (length a `div` 2)
     than :: Functor f => (a -> b) -> f a -> f b
     than = (<$>)
 
