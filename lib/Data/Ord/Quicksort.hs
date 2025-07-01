@@ -21,7 +21,7 @@ import           Data.STRef                        (modifySTRef, newSTRef,
                                                     readSTRef)
 import           Data.Vector.Mutable               (STVector, length, read,
                                                     splitAt, swap)
-import           Data.Vector.Mutable.Function      (withSTVector)
+import           Data.Vector.Mutable.Function      (mutableListTranform)
 import           Prelude                           hiding (length, read,
                                                     splitAt)
 
@@ -37,7 +37,7 @@ quickSort = quickSortBy compare
 -- Efficient, in place, recursive, imperative-style quicksort using Hoare's partition scheme
 -- with a simple middle element pivot
 quickSortBy :: ∀ a. (a -> a -> Ordering) -> [a] -> [a]
-quickSortBy c = withSTVector $ recursive $ \recurse vector ->
+quickSortBy c = mutableListTranform $ recursive $ \recurse vector ->
     when (length vector > 1) $ do
         partition vector >>= bothA_ recurse
   where
