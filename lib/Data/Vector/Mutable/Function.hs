@@ -7,8 +7,8 @@ import           Control.Monad.ST    (ST, runST)
 import qualified Data.Vector         as V
 import qualified Data.Vector.Mutable as VM
 
-mutableListTranform :: (∀ s. VM.STVector s a -> ST s ()) -> [a] -> [a]
-mutableListTranform f xs = runST $ do
+mutableListTransform :: (∀ s. VM.STVector s a -> ST s ()) -> [a] -> [a]
+mutableListTransform f xs = runST $ do
     mutXs <- V.thaw $ V.fromList xs
     f mutXs
     V.toList <$> V.freeze mutXs
