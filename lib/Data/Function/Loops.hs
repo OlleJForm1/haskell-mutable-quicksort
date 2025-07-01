@@ -1,19 +1,14 @@
-{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE LambdaCase    #-}
+{-# LANGUAGE RankNTypes    #-}
+{-# LANGUAGE UnicodeSyntax #-}
 
 module Data.Function.Loops
   ( loopM
-  , LoopResult
   )
   where
 
-data LoopResult a = Continue | Done a
-
 loopM :: Monad m
-      => (LoopResult a
-          -> (a -> m (LoopResult a))
-          -> m (LoopResult a))
+      => (∀ b. m b -> (a -> m b) -> m b)
       -> m a
-loopM f = f Continue (pure . Done) >>= \case
-    Continue -> loopM f
-    Done a -> pure a
+loopM f = f (loopM f) (pure)
 

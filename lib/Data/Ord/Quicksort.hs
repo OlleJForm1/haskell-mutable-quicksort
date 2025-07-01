@@ -44,13 +44,13 @@ quickSortBy c = withSTVector $ recursive $ \recurse vector ->
     partition :: STVector s a -> ST s (STVector s a, STVector s a)
     partition vector = do
         p <- choosePivot vector
-        (low, high) <- newSTRef `bothA` (-1, length vector)
+        ptrs@(low, high) <- newSTRef `bothA` (-1, length vector)
         loopM $ \continue done -> do
             increment low `untilM_` ((p `lessOrEqualOn` c) `than` (vector `at` low))
             decrement high `untilM_` ((p `greaterOrEqualOn` c) `than` (vector `at` high))
-            (low', high') <- readSTRef `bothA` (low, high)
+            (low', high') <- readSTRef `bothA` ptrs
             if low' < high'
-              then swap vector low' high' $> continue
+              then swap vector low' high' *> continue
               else splitAt low' vector & done
 
     increment = (`modifySTRef` (+   1))
