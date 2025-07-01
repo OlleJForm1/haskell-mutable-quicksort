@@ -24,7 +24,8 @@ library lib
                       monad-loops
     hs-source-dirs:   lib
     exposed-modules:  Data.Ord.Quicksort
-    other-modules:    Control.Applicative.Bitraversable, 
+    other-modules:    Control.Applicative.Bitraversable,
+                      Control.Applicative.Tuple,
                       Data.Ord.Compare,
                       Data.Vector.Mutable.Function,
                       Data.Function.Loops,

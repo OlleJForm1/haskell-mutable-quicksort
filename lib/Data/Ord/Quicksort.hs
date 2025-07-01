@@ -28,6 +28,7 @@ import           Data.Vector.Mutable               (STVector, length, read,
 import           Data.Vector.Mutable.Function      (mutableListTransform)
 import           Prelude                           hiding (length, read,
                                                     splitAt)
+import Control.Applicative.Tuple (allT3)
 
 qs :: Ord a => [a] -> [a]
 qs [] = []
@@ -41,7 +42,7 @@ quickSort = quickSortBy compare
 
 
 quickSortBy :: (a -> a -> Ordering) -> [a] -> [a]
-quickSortBy c = quickSortGeneral $ hoarePartition c
+quickSortBy c = quickSortGeneral $ hoarePartition c (median3Pivot c)
 
 
 quickSortGeneral :: (∀ s. STVector s a -> ST s (STVector s a, STVector s a))
@@ -54,10 +55,11 @@ quickSortGeneral partition =
 
 
 hoarePartition :: (a -> a -> Ordering)
+               -> (∀ s. STVector s a -> ST s a)
                -> STVector s a
                -> ST s (STVector s a, STVector s a)
-hoarePartition comp vector = do
-    p <- choosePivot vector
+hoarePartition comp pivot vector = do
+    p <- pivot vector
     ptrs@(low, high) <- newSTRef `bothA` (-1, length vector)
     loopM $ \continue done -> do
         increment low `untilM_`
@@ -76,7 +78,23 @@ hoarePartition comp vector = do
     increment = (`modifySTRef` (+   1))
     decrement = (`modifySTRef` (+ (-1)))
     at a = readSTRef >=> read a
-    choosePivot a = read a (length a `div` 2)
     than :: Functor f => (a -> b) -> f a -> f b
     than = (<$>)
+
+
+median3Pivot :: (a -> a -> Ordering) -> STVector s a -> ST s a
+median3Pivot comp vector = do
+    (low, mid, high) <- allT3
+                          (read vector) 
+                          (0, length vector `div` 2, length vector - 1)
+
+    let (smaller, greater) =
+          case low `comp` mid of
+            LT -> (low, mid)
+            _  -> (mid, low)
+
+    pure $ case (smaller `comp` high, greater `comp` high) of
+             (GT, _ ) -> smaller
+             (_ , LT) -> greater
+             _        -> high
 
