@@ -39,7 +39,6 @@ quickSortBy c = mutableListTransform $ recursive $ \recurse vector ->
     when (length vector > 1) $ do
         partition vector >>= bothA_ recurse
   where
-    partition :: STVector s a -> ST s (STVector s a, STVector s a)
     partition vector = do
         p <- choosePivot vector
         ptrs@(low, high) <- newSTRef `bothA` (-1, length vector)
