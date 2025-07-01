@@ -90,14 +90,18 @@ median3Pivot comp vector = do
     (low, mid, high) <- allT3
                           (read vector)
                           (0, length vector `div` 2, length vector - 1)
+    pure $ median3 low mid high
+  where
+    median3 a b c = (a `min'` b) `max'` ((a `max'` b) `min'` c)
+    max' a b =
+        case a `comp` b of
+          GT -> a
+          EQ -> a
+          LT -> b
 
-    let (smaller, greater) =
-          case low `comp` mid of
-            LT -> (low, mid)
-            _  -> (mid, low)
-
-    pure $ case (smaller `comp` high, greater `comp` high) of
-             (GT, _ ) -> smaller
-             (_ , LT) -> greater
-             _        -> high
+    min' a b = 
+        case a `comp` b of
+          LT -> a
+          EQ -> a
+          GT -> b
 
