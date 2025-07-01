@@ -49,7 +49,7 @@ quickSortGeneral :: (∀ s. STVector s a -> ST s (STVector s a, STVector s a))
                  -> [a]
 quickSortGeneral partition =
     mutableListTransform $ recursive $ \recurse vector ->
-        when (length vector > 1) $ do
+        when (length vector > 1) $
             partition vector >>= bothA_ recurse
 
 
