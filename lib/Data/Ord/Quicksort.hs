@@ -3,7 +3,12 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE UnicodeSyntax       #-}
 
-module Data.Ord.Quicksort where
+module Data.Ord.Quicksort
+  ( qs
+  , quickSort
+  , quickSortBy
+  )
+  where
 
 import           Control.Applicative.Bitraversable (bothA, bothA_)
 import           Control.Monad                     (when, (>=>))
