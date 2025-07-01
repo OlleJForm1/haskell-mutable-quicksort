@@ -32,7 +32,8 @@ qs (x:xs) = qs lesser ++ qs greater
 quickSort :: Ord a => [a] -> [a]
 quickSort = quickSortBy compare
 
--- Efficient, in place, recursive, imperative-style quicksort using Hoare's partition scheme
+-- Efficient, in place, recursive,
+-- imperative-style quicksort using Hoare's partition scheme
 -- with a simple middle element pivot
 quickSortBy :: ∀ a. (a -> a -> Ordering) -> [a] -> [a]
 quickSortBy c = mutableListTransform $ recursive $ \recurse vector ->
@@ -43,8 +44,12 @@ quickSortBy c = mutableListTransform $ recursive $ \recurse vector ->
         p <- choosePivot vector
         ptrs@(low, high) <- newSTRef `bothA` (-1, length vector)
         loopM $ \continue done -> do
-            increment low `untilM_` ((p `lessOrEqualOn` c) `than` (vector `at` low))
-            decrement high `untilM_` ((p `greaterOrEqualOn` c) `than` (vector `at` high))
+            increment low `untilM_`
+              ((p `lessOrEqualOn` c) `than` (vector `at` low))
+
+            decrement high `untilM_`
+              ((p `greaterOrEqualOn` c) `than` (vector `at` high))
+
             (low', high') <- readSTRef `bothA` ptrs
             if low' < high'
               then swap vector low' high' *> continue
