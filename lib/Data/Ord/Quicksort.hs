@@ -1,17 +1,21 @@
 -- "Haskell is the finest imperative programming language"
 
+{-# LANGUAGE RankNTypes          #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE UnicodeSyntax       #-}
-{-# LANGUAGE RankNTypes #-}
 
 module Data.Ord.Quicksort
   ( qs
   , quickSort
   , quickSortBy
+  , quickSortGeneral
+  , hoarePartition
+  , median3Pivot
   )
   where
 
 import           Control.Applicative.Bitraversable (bothA, bothA_)
+import           Control.Applicative.Tuple         (allT3)
 import           Control.Monad                     (when, (>=>))
 import           Control.Monad.Loops               (untilM_)
 import           Control.Monad.ST                  (ST)
@@ -28,7 +32,6 @@ import           Data.Vector.Mutable               (STVector, length, read,
 import           Data.Vector.Mutable.Function      (mutableListTransform)
 import           Prelude                           hiding (length, read,
                                                     splitAt)
-import Control.Applicative.Tuple (allT3)
 
 qs :: Ord a => [a] -> [a]
 qs [] = []
@@ -85,7 +88,7 @@ hoarePartition comp pivot vector = do
 median3Pivot :: (a -> a -> Ordering) -> STVector s a -> ST s a
 median3Pivot comp vector = do
     (low, mid, high) <- allT3
-                          (read vector) 
+                          (read vector)
                           (0, length vector `div` 2, length vector - 1)
 
     let (smaller, greater) =
