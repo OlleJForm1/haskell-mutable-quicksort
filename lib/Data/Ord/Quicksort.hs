@@ -6,15 +6,13 @@
 module Data.Ord.Quicksort where
 
 import           Control.Applicative.Bitraversable (bothA, bothA_)
-import           Control.Monad                     (void, when, (>=>))
-import           Control.Monad.Loops               (untilJust, untilM_)
+import           Control.Monad                     (when, (>=>))
+import           Control.Monad.Loops               (untilM_)
 import           Control.Monad.ST                  (ST)
 import           Data.Function                     ((&))
 import           Data.Function.Loops               (loopM)
 import           Data.Function.Recursive           (recursive)
-import           Data.Functor                      (($>))
 import qualified Data.List                         as L
-import           Data.Ord                          (comparing)
 import           Data.Ord.Compare                  (greaterOrEqualOn,
                                                     lessOrEqualOn)
 import           Data.STRef                        (modifySTRef, newSTRef,
