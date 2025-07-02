@@ -1,10 +1,10 @@
 module Control.Applicative.Tuple
-  ( allT3
+  ( allT3A
   )
   where
 
 import           Control.Monad (ap)
 
-allT3 :: Applicative f => (a -> f b) -> (a, a, a) -> f (b, b, b)
-allT3 f (a, b, c) = (,,) <$> f a <*> f b <*> f c
+allT3A :: Applicative f => (a -> f b) -> (a, a, a) -> f (b, b, b)
+allT3A f (a, b, c) = (,,) <$> f a <*> f b <*> f c
 

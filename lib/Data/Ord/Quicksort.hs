@@ -15,7 +15,7 @@ module Data.Ord.Quicksort
   where
 
 import           Control.Applicative.Bitraversable (bothA, bothA_)
-import           Control.Applicative.Tuple         (allT3)
+import           Control.Applicative.Tuple         (allT3A)
 import           Control.Monad                     (when, (>=>))
 import           Control.Monad.Loops               (untilM_)
 import           Control.Monad.ST                  (ST)
@@ -87,7 +87,7 @@ hoarePartition comp pivot vector = do
 
 median3Pivot :: (a -> a -> Ordering) -> STVector s a -> ST s a
 median3Pivot comp vector = do
-    (low, mid, high) <- allT3
+    (low, mid, high) <- allT3A
                           (read vector)
                           (0, length vector `div` 2, length vector - 1)
     pure $ median3 low mid high
